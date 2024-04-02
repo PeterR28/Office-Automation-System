@@ -9,5 +9,5 @@ public interface Actor
  void sendMessage(String message);
  void editPatientInfo(String PatientId);
  void accesssMedicalHIstory(String patientId);
- void 
+ void scheduleAppoitment(int patientID, String data);
 }
