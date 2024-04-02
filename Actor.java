@@ -6,7 +6,7 @@
   }
 public interface Actor
 {
-
+  Role role;
  void sendMessage(String message);
  void editPatientInfo(String PatientId);
  void accesssMedicalHIstory(String patientId);
