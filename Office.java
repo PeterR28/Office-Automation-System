@@ -2,10 +2,12 @@ import java.io.File;
 import java.io.FileWriter;
 
 public class Office {
+	
+	private static Office officeInstance = null;
 	private final String FILEPATH = "src/records/";
 	
-	
-	/*
+	private Office() {
+		/*
 	   	FIXME: make constructor
 		on startup, the office has to load all of the usernames and passwords
 		into a Map. (Probably a map?? maybe a hashmap. I need to figure out
@@ -13,13 +15,17 @@ public class Office {
 		thoughts: try to see if I can have a Map with one key and multiple values (one for password, one for account type)
 		if I can't do that, maybe append an extra digit to the end of the password to identify what type the account is
 	 */
-	
-	public Office() {
-		
 	}
 	
-	// all of these guys can be done relatively similarly to HW4.
-	public static void storePatientInfo(int patientID, String info) throws IOException {
+	public static synchronized Office getInstance() {
+		
+		if(officeInstance == null)
+			officeInstance = new Office();
+		
+		return officeInstance;
+	}
+	
+	public void storePatientInfo(int patientID, String info) throws IOException {
 		
 		File log = new File(FILEPATH + patientID + "_info.txt");
 		FileWriter writer = new FileWriter(FILEPATH + patientID + "_info.txt");
@@ -28,8 +34,7 @@ public class Office {
 		writer.close();
 	}
 	
-	public static void storeMedicalHistory(int patientID, String history) throws IOException {
-		
+	public void storeMedicalHistory(int patientID, String history) throws IOException {
 		File log = new File(FILEPATH + patientID + "_history.txt");
 		FileWriter writer = new FileWriter(FILEPATH + patientID + "_history.txt");
 		log.createNewFile();
@@ -37,8 +42,21 @@ public class Office {
 		writer.close();
 	}
 	
-	public void storeAccount(String username, String password, Enum role) {
-		//FIXME: make storeAccount
+	public void storeAccount(String username, String password, Role role) throws IOException {
+		File log = new File(FILEPATH + "accounts.txt");
+		FileWriter writer = new FileWriter(FILEPATH + "accounts.txt", true); // true means it appends
+		log.createNewFile();
+		writer.write(username + " " + password);
+		switch (role) {
+			case DOCTOR: writer.write("d");
+				break;
+			case NURSE: writer.write("n");
+				break;
+			case PATIENT: writer.write("p");
+				break;
+		}
+		writer.write("\n");
+		writer.close();
 	}
 	
 	public void storeMessages(int patientID, String messages) {
@@ -67,11 +85,5 @@ public class Office {
 	public String getAccountInfo(String username, String password, Actor a) {
 		//FIXME: make getAccountInfo()
 		return "getAccountInfo() isn't working";
-	}
-	
-	
-	public static void main(String[] args) {
-		
-		storePatientInfo(12345, "test info");
 	}
 }
