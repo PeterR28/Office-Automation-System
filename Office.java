@@ -1,20 +1,40 @@
+import java.io.File;
+import java.io.FileWriter;
 
 public class Office {
+	private final String FILEPATH = "src/records/";
+	
+	
+	/*
+	   	FIXME: make constructor
+		on startup, the office has to load all of the usernames and passwords
+		into a Map. (Probably a map?? maybe a hashmap. I need to figure out
+		how to hash things so I'm not storing raw passwords)
+		thoughts: try to see if I can have a Map with one key and multiple values (one for password, one for account type)
+		if I can't do that, maybe append an extra digit to the end of the password to identify what type the account is
+	 */
 	
 	public Office() {
-		// FIXME: make constructor
-		// on startup, the office has to load all of the usernames and passwords
-		// into a Map. (Probably a map?? maybe a hashmap. I need to figure out
-		// how to hash things so I'm not storing raw passwords)
+		
 	}
 	
 	// all of these guys can be done relatively similarly to HW4.
-	public void storePatientInfo(int patientID, String info) {
-		//FIXME: make storePatientInfo
+	public static void storePatientInfo(int patientID, String info) throws IOException {
+		
+		File log = new File(FILEPATH + patientID + "_info.txt");
+		FileWriter writer = new FileWriter(FILEPATH + patientID + "_info.txt");
+		log.createNewFile();
+		writer.write(info);
+		writer.close();
 	}
 	
-	public void storeMedicalHistory(int patientID, String history) {
-		//FIXME: make storeMedicalHistory
+	public static void storeMedicalHistory(int patientID, String history) throws IOException {
+		
+		File log = new File(FILEPATH + patientID + "_history.txt");
+		FileWriter writer = new FileWriter(FILEPATH + patientID + "_history.txt");
+		log.createNewFile();
+		writer.write(history);
+		writer.close();
 	}
 	
 	public void storeAccount(String username, String password, Enum role) {
@@ -47,5 +67,11 @@ public class Office {
 	public String getAccountInfo(String username, String password, Actor a) {
 		//FIXME: make getAccountInfo()
 		return "getAccountInfo() isn't working";
+	}
+	
+	
+	public static void main(String[] args) {
+		
+		storePatientInfo(12345, "test info");
 	}
 }
