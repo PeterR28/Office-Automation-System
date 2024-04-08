@@ -1,0 +1,4 @@
+P: my tummy hurt
+N: sorry :(
+D: you're terminal.
+
