@@ -45,11 +45,13 @@ public class Office {
 	 * written out to a .txt file. Each piece of information is written on a new line.
 	 */
 	public void storePatientInfo(int patientID, String[] info) throws IOException {
+		
 		File log = new File(FILEPATH + patientID + "_info.txt");
 		FileWriter writer = new FileWriter(FILEPATH + patientID + "_info.txt");
 		log.createNewFile();
+		
 		for (String i : info) {
-			writer.write(i + "\n ");
+			writer.write(i + "\n");
 		}
 		writer.close();
 	}
@@ -59,11 +61,13 @@ public class Office {
 	 * written out to a .txt file. Each piece of information is written on a new line.
 	 */
 	public void storeMedicalHistory(int patientID, String[] history) throws IOException {
+		
 		File log = new File(FILEPATH + patientID + "_history.txt");
 		FileWriter writer = new FileWriter(FILEPATH + patientID + "_history.txt");
 		log.createNewFile();
+		
 		for (String i : history) {
-			writer.write(i + "\n ");
+			writer.write(i + "\n");
 		}
 		writer.close();
 	}
@@ -74,10 +78,12 @@ public class Office {
 	 * is appended to the end of the password.
 	 */
 	public void storeAccount(String username, String password, Role role) throws IOException {
+		
 		File log = new File(FILEPATH + "accounts.txt");
 		FileWriter writer = new FileWriter(FILEPATH + "accounts.txt", true); // true means it appends
 		log.createNewFile();
 		writer.write(username + " " + password);
+		
 		switch (role) {
 			case DOCTOR: writer.write("d");
 				break;
@@ -95,9 +101,11 @@ public class Office {
 	 * text file. All messages sent to or from the patient are stored in the same file.
 	 */
 	public void storeMessages(int patientID, String[] messages) throws IOException {
+		
 		File log = new File(FILEPATH + patientID + "_messages.txt");
 		FileWriter writer = new FileWriter(FILEPATH + patientID + "_messages.txt", true); // true means it appends
 		log.createNewFile();
+		
 		for (String m : messages) {
 			writer.write(m);
 		}
@@ -114,9 +122,10 @@ public class Office {
 		BufferedReader reader = new BufferedReader(new FileReader(filePath));
 		StringBuilder patientInfo = new StringBuilder();
 		
-		reader.lines()
-			  .map(l -> l.replace(" ", "\n"))
-			  .forEach(patientInfo::append);
+		while(reader.ready()) {
+			patientInfo.append(reader.readLine());
+			patientInfo.append("\n");
+		}
 		reader.close();
 		
 		return patientInfo.toString();
@@ -132,9 +141,11 @@ public class Office {
 		BufferedReader reader = new BufferedReader(new FileReader(filePath));
 		StringBuilder history = new StringBuilder();
 		
-		reader.lines()
-			  .map(l -> l.replace(" ", "\n"))
-			  .forEach(history::append);
+		while(reader.ready()) {
+			history.append(reader.readLine());
+			history.append("\n");
+		}
+		
 		reader.close();
 		
 		return history.toString();
@@ -159,10 +170,38 @@ public class Office {
 		return messages.toString();
 	}
 	
-	// not entirely sure what this guy is supposed to do. Need to ask
-	public String getAccountInfo(String username, String password) {
-		//FIXME: make getAccountInfo()
-		return "getAccountInfo() isn't working";
+	/*
+	 * Takes a username and password. If they are valid, it returns the account's role.
+	 * If they are invalid, returns null.
+	 */
+	public Role checkAccountType(String username, String password) {
+		
+		Role userRole = null;
+		
+		if(accounts.containsKey(username) == false)
+			return userRole;
+		
+		String actual = accounts.get(username);
+		char role = actual.charAt(actual.length() - 1);
+		actual = actual.substring(0, actual.length() - 1);
+		
+		if(password.equals(actual)) {
+			
+			switch (role) {
+				case 'n':
+					userRole = Role.NURSE;
+					break;
+				case 'd':
+					userRole = Role.DOCTOR;
+					break;
+				case 'p':
+					userRole = Role.PATIENT;
+					break;
+				default:
+					userRole = null;
+			}
+		}
+		return userRole;
 	}
 	
 	/*
