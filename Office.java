@@ -77,7 +77,7 @@ public class Office {
 	 * account that was created, a "d" for doctor, "n" for nurse, and "p" for patient
 	 * is appended to the end of the password.
 	 */
-	public void storeAccount(String username, String password, Role role) throws IOException {
+	public void storeAccount(String username, String password, Actor.Role role) throws IOException {
 		
 		File log = new File(FILEPATH + "accounts.txt");
 		FileWriter writer = new FileWriter(FILEPATH + "accounts.txt", true); // true means it appends
