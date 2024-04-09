@@ -1,3 +1,5 @@
+package application;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -174,9 +176,9 @@ public class Office {
 	 * Takes a username and password. If they are valid, it returns the account's role.
 	 * If they are invalid, returns null.
 	 */
-	public Role checkAccountType(String username, String password) {
+	public Actor.Role checkAccountType(String username, String password) {
 		
-		Role userRole = null;
+		Actor.Role userRole = null;
 		
 		if(accounts.containsKey(username) == false)
 			return userRole;
@@ -189,13 +191,13 @@ public class Office {
 			
 			switch (role) {
 				case 'n':
-					userRole = Role.NURSE;
+					userRole = Actor.Role.NURSE;
 					break;
 				case 'd':
-					userRole = Role.DOCTOR;
+					userRole = Actor.Role.DOCTOR;
 					break;
 				case 'p':
-					userRole = Role.PATIENT;
+					userRole = Actor.Role.PATIENT;
 					break;
 				default:
 					userRole = null;
