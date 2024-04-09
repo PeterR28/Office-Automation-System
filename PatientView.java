@@ -12,10 +12,10 @@ import javafx.scene.text.Font;
 import javafx.scene.paint.Color;
 public class PatientView
 {
-
+	private Stage primaryStage; 
 	public void display(int id)
 	{
-		Stage primaryStage = new Stage();
+		primaryStage = new Stage();
 		//the border pain  // splits into top, left , bottom, right, and center
 		BorderPane layout = new BorderPane();
 		
@@ -45,7 +45,7 @@ public class PatientView
 	    //add drop downs for patient history 
 	    MenuItem previousVisits = new MenuItem("Previous Visits");
 	    MenuItem  medicalHistory= new MenuItem("Medical History");
-	    patientHistory.getItems().addAll(previousVisits, medicalHistory);
+	    patientHistory.getItems().addAll( medicalHistory);
 	   
 	    //create messages menu bar
 	    Menu messages = new Menu();
@@ -71,22 +71,22 @@ public class PatientView
 		primaryStage.setScene(scene);
 		primaryStage.show();
 		
-	    sendMessages.setOnAction(e -> createMessage());
+	    sendMessages.setOnAction(e -> createMessage(id));
 	    contactInfo.setOnAction(e -> contactInfo(id));
+	    medicalHistory.setOnAction(e -> medicalHistory(id));
+	    signOut.setOnAction(e -> signOut());
 	   // patientInfo.setOnAction(e -> patientInfo(id));
 	    
 	}
 
-	private void patientInfo(int id) 
-	{
-		String patientInfo="";
-		
+	private void signOut() {
+		primaryStage.close();
 	}
 
-	private Object updateInsurance() 
+	private void medicalHistory(int id) 
 	{
-		System.out.println("Access patient Record according to Patient ID and update");
-		return null;
+		RecordsView newRecord = new RecordsView();
+		newRecord.display();
 	}
 
 	private void contactInfo(int id ) 
@@ -113,14 +113,13 @@ public class PatientView
 	        Button updateInfoButton = new Button("Update Info");
 	        updateInfoButton.setOnAction(event -> {
 	        	String[] updatedInfo = new String[5];
-	        	  String text = infoField.getText(); // Get text from the TextArea
-	              String[] lines = text.split("\n"); // Split the text into lines
+	        	String text = infoField.getText(); // Get text from the TextArea
+	            String[] lines = text.split("\n"); // Split the text into lines
 	              
 	              // Optional: Print each line to the console
 	              for (int i = 0; i<lines.length; i++) {
 	                 updatedInfo[i] = lines[i];
 	              }
-
 	            try {
 					Office.getInstance().storePatientInfo(id, updatedInfo);
 				} catch (IOException e) {
@@ -135,14 +134,13 @@ public class PatientView
 	        layout.getChildren().addAll(infoLabel, infoField, updateInfoButton);
 	        Scene scene = new Scene(layout);
 	        popupStage.setScene(scene);
-	        popupStage.show();
-	        
+	        popupStage.show();       
 	}
 
-	private Object createMessage() 
+	private Object createMessage(int id) 
 	{
 		MessageView patientMessages = new MessageView();
-		patientMessages.display();
+		patientMessages.display(id);
 		return null;
 	}
 
