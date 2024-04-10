@@ -91,6 +91,9 @@ public class Office {
 		String date = java.time.LocalDate.now().toString();
 		String filePath = FILEPATH + patientID + "/" + patientID + "_" + date + "_history.txt"; // src/records/patientID/patientID_date_history.txt
 		File log = new File(filePath);
+		if (!log.exists()) {
+			log.mkdirs();
+		}
 		FileWriter writer = new FileWriter(filePath);
 		log.createNewFile();
 		
