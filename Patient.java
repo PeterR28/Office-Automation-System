@@ -39,7 +39,7 @@ public  class Patient extends Actor
 		return patientInfo;
 		
 	}
-	public void setMedicalHIstory(String [] history)
+	public void setMedicalHistory(String [] history)
 	{
 		medicalHistory = history; 
 	}
