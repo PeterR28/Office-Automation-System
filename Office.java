@@ -94,7 +94,7 @@ public class Office {
 		if (!log.exists()) {
 			log.mkdirs();
 		}
-		FileWriter writer = new FileWriter(filePath);
+		FileWriter writer = new FileWriter(filePath, true); // true means it appends
 		log.createNewFile();
 		
 		writer.write(date + "\n");
@@ -271,4 +271,5 @@ public class Office {
 		}
 		return userRole;
 	}
+
 }
