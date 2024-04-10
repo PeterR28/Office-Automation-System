@@ -12,15 +12,9 @@ public class Doctor extends Actor
 		this.username = user;
 		this.password = pass;
 	}
-	
-	public String createNote()
-	{
-		return "Hello World";
-	}
-	
-	public void saveNote(String note)
-	{
-		
-	}
 
+	public Role getRole()
+	{
+		return role;
+	}
 }
