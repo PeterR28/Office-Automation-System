@@ -13,8 +13,13 @@ public class Nurse extends Actor
 		this.password = pass;
 	}
 	
-	public void saveVitals(String PatientId, String vitals)
+	public void saveVitals(int PatientId, String[] vitals)
 	{
-		
+		Office.storeMedicalHistory(PatientId, vitals);
+	}
+	
+	public Role getRole()
+	{
+		return role;
 	}
 }
