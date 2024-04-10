@@ -1,21 +1,29 @@
+import java.util.Random;
+
 public  class Patient extends Actor
 {
 	
 	String[] patientInfo  = new String[5] ;
-	String medicalHistory;
+	String []medicalHistory = new String[5];
+	String appointmentDate; 
 	int id; 
 	Role role; 
 	public Patient ()
 	{
 		this.role = Role.PATIENT;
-		id = 12345;
+		Random randomObj = new Random();
+		//creates a random number 
+		 id = 10000 + randomObj.nextInt(90000); // 90000 is the range size
+		    
 		this.patientInfo[0] = "Name ";
 		this.patientInfo[1] = "Date of Birth ";
 		this.patientInfo[2] = "Phone Number";
 		this.patientInfo[3] = "Insurance ID";
 		this.patientInfo[4] = "CVS pahrmacy"; 
-		
-		this.medicalHistory = "i am ok ";
+		this.medicalHistory[0] = "previouse visists";
+		this.medicalHistory[1] = "previouse health issues";
+		this.medicalHistory[2] = "previous medications";
+		this.medicalHistory[3] = "hstory of immunization";
 	}
 	
 	public void sendMessage(String message)
@@ -31,7 +39,11 @@ public  class Patient extends Actor
 		return patientInfo;
 		
 	}
-	public String getMedicalHistory()
+	public void setMedicalHIstory(String [] history)
+	{
+		medicalHistory = history; 
+	}
+	public String[] getMedicalHistory()
 	{
 		return medicalHistory;
 	}
@@ -39,4 +51,6 @@ public  class Patient extends Actor
 	{
 		return role;
 	}
+
+}
 
