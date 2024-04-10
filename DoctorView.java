@@ -1,5 +1,3 @@
-package login;
-
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -11,7 +9,11 @@ import javafx.scene.paint.Color;
 
 public class DoctorView {
 
-    public void start(Stage primaryStage) {
+		private Office office;
+	 	private TextField patientNameField;
+	    private TextField dobField;
+	
+    public DoctorView() {
     	 VBox root = new VBox(20);
          root.setPadding(new Insets(20));
          root.setAlignment(Pos.TOP_CENTER);
@@ -25,10 +27,38 @@ public class DoctorView {
          // Search bar
          HBox searchBox = new HBox(10);
          TextField searchBar = new TextField();
-         searchBar.setPromptText("Search Patient");
+         searchBar.setPromptText("Search by Patient I.D.");
          Button searchButton = new Button("Search");
          searchBox.getChildren().addAll(searchBar, searchButton);
          searchBox.setAlignment(Pos.CENTER);
+         searchButton.setOnAction(e -> {
+             String patientIdText = searchBar.getText().trim();
+             if (!patientIdText.isEmpty()) {
+
+                     int patientId = Integer.parseInt(patientIdText);
+                     
+                     String patientInfo = office.getPatientInfo(patientId);
+
+                     if (patientInfo != null && patientInfo.length >= 2) {
+                         patientNameField.setText();         // Set full name
+                         dobField.setText(patientInfo[1]);         // Set date of birth
+                     } else {
+                         // Handle case when patient info is not found
+                         patientNameField.setText("Patient not found");
+                         dobField.setText("");
+                 } 
+             }
+         });
+
+         searchBox.getChildren().addAll(searchBar, searchButton);
+         searchBox.setAlignment(Pos.CENTER);
+
+         // Initialize patient information fields
+         patientNameField = new TextField();
+         patientNameField.setPromptText("Patient Name");
+
+         dobField = new TextField();
+         dobField.setPromptText("Date of Birth");
 
          // Buttons for viewing patient records and messages
          HBox buttonBox = new HBox(20);
@@ -92,10 +122,10 @@ public class DoctorView {
          );
 
          // Create scene and set stage
-         Scene scene = new Scene(root, 800, 600);
-         primaryStage.setScene(scene);
-         primaryStage.setTitle("Doctor View");
-         primaryStage.show();
+         Stage Stage = new Stage();
+         Stage.setScene(new Scene(root, 800,600));
+         Stage.setTitle("Doctor View");
+         Stage.show();
      }
 
 }
