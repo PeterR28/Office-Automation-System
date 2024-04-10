@@ -1,4 +1,5 @@
-package login;
+
+import java.io.IOException;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -16,8 +17,7 @@ public class LoginView extends Application {
 	public static void main(String[] args) {
         launch(args);
     }
-	
-	
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         VBox root = new VBox(20);
@@ -39,32 +39,75 @@ public class LoginView extends Application {
         Button signInButton = new Button("Sign In");
         signInButton.setOnAction(e -> {
             String password = passwordField.getText();
-            if (password.startsWith("00")) {
-                // Open DoctorView
-            	DoctorView doctorView = new DoctorView();
-                doctorView.start(new Stage());
-                primaryStage.close(); // Close the login window
-            } else if (password.startsWith("0")) {
-                // Open NurseView
-                new NurseView();
-            } else {
-                // Open PatientView for other passwords
-                new PatientView();
+            String username = usernameField.getText();
+            SignInHandler signInHandler = new SignInHandler();
+            Actor.Role accountType = signInHandler.checkAccountType(username, password);
+            System.out.println(accountType);
+            if (accountType!=null)
+            {
+            	
+	            if (accountType == Actor.Role.DOCTOR) {
+	                // Open DoctorView
+	            	DoctorView doctorView = new DoctorView();
+	               doctorView.display(0);
+	               // primaryStage.close(); // Close the login window
+	            	System.out.println("Should be doctor view");
+	            } else if (password.startsWith("0")) {
+	                // Open NurseView
+	            	System.out.println("Should be nurse View ");
+	               // new NurseView();
+	            } else {
+	            	
+	                // Open PatientView for other passwords
+	                PatientView patientView = new PatientView();
+	                Patient openPatient = new Patient();
+	                try {
+						Office.getInstance().storeAccount(usernameField.getText(), passwordField.getText(), openPatient.getRole());
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+	                try {
+						Office.getInstance().storePatientInfo(openPatient.getId(), openPatient.getContactInfo());
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+	                patientView.display(openPatient.getId());
+	                
+	            }
+            }else 
+            {
+            	signInHandler.incorrectLoginError();
+            	
             }
-        });
+            });
 
         Button createAccountButton = new Button("Create New Account");
         createAccountButton.setOnAction(e -> {
-            // Implement logic to handle account creation
-            System.out.println("Create New Account button clicked");
+        	 PatientView patientView = new PatientView();
+             Patient newPatient = new Patient();
+             try {
+					Office.getInstance().storeAccount(usernameField.getText(), passwordField.getText(), newPatient.getRole());
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+             try {
+					Office.getInstance().storePatientInfo(newPatient.getId(), newPatient.getContactInfo());
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+             patientView.display(newPatient.getId());
+           
         });
 
         root.getChildren().addAll(welcomeLabel, usernameField, passwordField, signInButton, createAccountButton);
-
+        
         Scene scene = new Scene(root, 400, 500);
         primaryStage.setScene(scene);
         primaryStage.setTitle("File-a-Doc Login");
         primaryStage.show();
-    }
-   
+    } 
 }
