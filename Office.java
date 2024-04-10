@@ -15,7 +15,7 @@ public class Office {
 	private static Office officeInstance = null;
 	private final String FILEPATH = "src/records/";
 	
-	/*
+	/*****
 	 * Office is a singleton class. The constructor CANNOT be called. Instead, you have to
 	 * use the getInstance() class.
 	 * 		office = Office.getInstance();
@@ -26,11 +26,26 @@ public class Office {
 	
 	private Office() {
 
+		accounts = new HashMap<>();
 		loadAccountInfo();
-		// System.out.println(accounts); tester code for loadAccountInfo()
 	}
 	
-	/*
+	/*****
+	 * loads all account info from accounts.txt into a hashmap.
+	 */
+	private void loadAccountInfo() {
+		String filePath = FILEPATH + "accounts.txt";
+		
+		try(FileInputStream input = new FileInputStream(filePath)) {
+			Properties prop = new Properties();
+			prop.load(input);
+			prop.forEach( (key, value) -> accounts.put( key.toString(), value.toString() ) );
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/*****
 	 * Returns a pointer to the officeInstance object. This will be the only Office
 	 * object in the program, and everything will use it.
 	 */
@@ -42,7 +57,14 @@ public class Office {
 		return officeInstance;
 	}
 	
-	/*
+	
+	
+	
+	
+	
+	/* ----- These are the methods you'll actually use ----- */
+	
+	/*****
 	 * Takes in an int patientID and a String[] of the patient's information. it's then
 	 * written out to a .txt file. Each piece of information is written on a new line.
 	 */
@@ -58,23 +80,30 @@ public class Office {
 		writer.close();
 	}
 	
-	/*
+	
+	
+	/*****
 	 * Takes an int patientID and a String[] of the patient's medical history. it's then
 	 * written out to a .txt file. Each piece of information is written on a new line.
 	 */
 	public void storeMedicalHistory(int patientID, String[] history) throws IOException {
 		
-		File log = new File(FILEPATH + patientID + "_history.txt");
-		FileWriter writer = new FileWriter(FILEPATH + patientID + "_history.txt");
+		String date = java.time.LocalDate.now().toString();
+		String filePath = FILEPATH + patientID + "/" + patientID + "_" + date + "_history.txt"; // src/records/patientID/patientID_date_history.txt
+		File log = new File(filePath);
+		FileWriter writer = new FileWriter(filePath);
 		log.createNewFile();
 		
+		writer.write(date + "\n");
 		for (String i : history) {
 			writer.write(i + "\n");
 		}
 		writer.close();
 	}
 	
-	/*
+	
+	
+	/*****
 	 * Takes in a String username, password, and a Role. Depending on the role of the 
 	 * account that was created, a "d" for doctor, "n" for nurse, and "p" for patient
 	 * is appended to the end of the password.
@@ -96,9 +125,12 @@ public class Office {
 		}
 		writer.write("\n");
 		writer.close();
+		loadAccountInfo();
 	}
 	
-	/*
+	
+	
+	/*****
 	 * Takes in an int patientID and a String[] of messages. The messages are written to a
 	 * text file. All messages sent to or from the patient are stored in the same file.
 	 */
@@ -114,7 +146,9 @@ public class Office {
 		writer.close();
 	}
 	
-	/*
+	
+	
+	/*****
 	 * takes in a patientID, and returns a String representation of the patient info.
 	 * Each entry is separated by a new line.
 	 */
@@ -133,13 +167,16 @@ public class Office {
 		return patientInfo.toString();
 	}
 	
-	/*
-	 * takes in a patientID, and returns a String representation of the patient history.
-	 * Each entry is separated by a new line.
+	
+	
+	/******
+	 * takes in an int patientID and String date, and returns a String representation 
+	 * of the patient history. Each entry is separated by a new line. The date should 
+	 * only be gotten from getVisitDates.
 	 */
-	public String getMedicalHistory(int patientID) throws IOException {
+	public String getMedicalHistory(int patientID, String date) throws IOException {
 		
-		String filePath = FILEPATH + patientID + "_history.txt";
+		String filePath = FILEPATH + patientID + "/" + patientID + "_" + date + "_history.txt"; // src/records/patientID/patientID_date_history.txt
 		BufferedReader reader = new BufferedReader(new FileReader(filePath));
 		StringBuilder history = new StringBuilder();
 		
@@ -153,7 +190,30 @@ public class Office {
 		return history.toString();
 	}
 	
-	/*
+	
+	
+	/*****
+	 * given an int patientID, returns a string array containing all of the
+	 * visit dates in the records.
+	 */
+	public String[] getVisitDates(int patientID) throws IOException {
+		
+		String filePath = FILEPATH + patientID; // src/records/<patientID>
+		File path = new File(filePath);
+		File files[] = path.listFiles();
+		String dates[] = new String[files.length];
+		BufferedReader reader[] = new BufferedReader[files.length];
+		
+		for(int i = 0; i < files.length; i++) {
+			reader[i] = new BufferedReader(new FileReader(files[i]));
+			dates[i] = reader[i].readLine();
+		}
+		return dates;
+	}
+	
+	
+	
+	/*****
 	 * takes in a patientID, and returns a String representation of the messages.
 	 * Each entry is separated by a new line.
 	 */
@@ -172,7 +232,9 @@ public class Office {
 		return messages.toString();
 	}
 	
-	/*
+	
+	
+	/*****
 	 * Takes a username and password. If they are valid, it returns the account's role.
 	 * If they are invalid, returns null.
 	 */
@@ -204,21 +266,5 @@ public class Office {
 			}
 		}
 		return userRole;
-	}
-	
-	/*
-	 * loads all account info from accounts.txt into a hashmap.
-	 */
-	private void loadAccountInfo() {
-		String filePath = FILEPATH + "accounts.txt";
-		
-		try(FileInputStream input = new FileInputStream(filePath)) {
-			accounts = new HashMap<>();
-			Properties prop = new Properties();
-			prop.load(input);
-			prop.forEach( (key, value) -> accounts.put( key.toString(), value.toString() ) );
-		} catch(IOException e) {
-			e.printStackTrace();
-		}
 	}
 }
