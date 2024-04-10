@@ -210,6 +210,7 @@ public class Office {
 		for(int i = 0; i < files.length; i++) {
 			reader[i] = new BufferedReader(new FileReader(files[i]));
 			dates[i] = reader[i].readLine();
+			reader[i].close();
 		}
 		return dates;
 	}
