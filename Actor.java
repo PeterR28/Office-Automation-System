@@ -25,7 +25,7 @@ public class Actor
  //}
  //to update patient info you should search through the textfiles that should be saved in your Eclipse workspace
  //and then find the file that starts with the patient ID, and write to that file with the new patient Information.
- public void accesssMedicalHIstory(int patientId)
+ public void accessMedicalHistory(int patientId)
  {
 	 try {
 		Office.getInstance().getMedicalHistory(patientId);
