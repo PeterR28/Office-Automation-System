@@ -89,12 +89,15 @@ public class Office {
 	public void storeMedicalHistory(int patientID, String[] history) throws IOException {
 		
 		String date = java.time.LocalDate.now().toString();
-		String filePath = FILEPATH + patientID + "/" + patientID + "_" + date + "_history.txt"; // src/records/patientID/patientID_date_history.txt
-		File log = new File(filePath);
-		if (!log.exists()) {
-			log.mkdirs();
+		String filePath = FILEPATH + patientID + "/"; // src/records/patientID/
+		String fileName = patientID + "_" + date + "_history.txt";
+		File subfolder = new File(filePath);
+		if (!subfolder.exists()) {
+			subfolder.mkdirs();
 		}
-		FileWriter writer = new FileWriter(filePath, true); // true means it appends
+		
+		File log = new File(filePath + fileName);
+		FileWriter writer = new FileWriter(filePath + fileName, true); // true means it appends
 		log.createNewFile();
 		
 		writer.write(date + "\n");
@@ -182,7 +185,6 @@ public class Office {
 		String filePath = FILEPATH + patientID + "/" + patientID + "_" + date + "_history.txt"; // src/records/patientID/patientID_date_history.txt
 		BufferedReader reader = new BufferedReader(new FileReader(filePath));
 		StringBuilder history = new StringBuilder();
-		
 		while(reader.ready()) {
 			history.append(reader.readLine());
 			history.append("\n");
