@@ -20,10 +20,10 @@ public  class Patient extends Actor
 		this.patientInfo[2] = "Phone Number";
 		this.patientInfo[3] = "Insurance ID";
 		this.patientInfo[4] = "CVS pahrmacy"; 
-		this.medicalHistory[0] = "previouse visists";
-		this.medicalHistory[1] = "previouse health issues";
+		this.medicalHistory[0] = "previous visits";
+		this.medicalHistory[1] = "previous health issues";
 		this.medicalHistory[2] = "previous medications";
-		this.medicalHistory[3] = "hstory of immunization";
+		this.medicalHistory[3] = "history of immunization";
 	}
 	
 	public void sendMessage(String message)
