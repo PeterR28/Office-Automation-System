@@ -1,4 +1,3 @@
-Nurse1 password!!n
-Doctor1 password!!d
-Patient1 password!!p
-Nurse1 password!!n
+nurse passwordn
+doctor passwordd
+patient passwordp
