@@ -140,15 +140,12 @@ public class Office {
 	 * Takes in an int patientID and a String[] of messages. The messages are written to a
 	 * text file. All messages sent to or from the patient are stored in the same file.
 	 */
-	public void storeMessages(int patientID, String[] messages) throws IOException {
+	public void storeMessages(int patientID, String messages) throws IOException {
 		
 		File log = new File(FILEPATH + patientID + "_messages.txt");
 		FileWriter writer = new FileWriter(FILEPATH + patientID + "_messages.txt", true); // true means it appends
 		log.createNewFile();
-		
-		for (String m : messages) {
-			writer.write(m + "\n");
-		}
+		writer.write(messages + "\n");
 		writer.close();
 	}
 	
