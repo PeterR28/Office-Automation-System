@@ -147,7 +147,7 @@ public class Office {
 		log.createNewFile();
 		
 		for (String m : messages) {
-			writer.write(m);
+			writer.write(m + "\n");
 		}
 		writer.close();
 	}
