@@ -35,9 +35,10 @@ public class LoginView extends Application {
 
         PasswordField passwordField = new PasswordField();
         passwordField.setPromptText("Password");
-
+    	Patient openPatient = new Patient();
         Button signInButton = new Button("Sign In");
         signInButton.setOnAction(e -> {
+       
             String password = passwordField.getText();
             String username = usernameField.getText();
             SignInHandler signInHandler = new SignInHandler();
@@ -45,28 +46,29 @@ public class LoginView extends Application {
             System.out.println(accountType);
             if (accountType!=null)
             {
-            	
 	            if (accountType == Actor.Role.DOCTOR) {
 	                // Open DoctorView
 	            	DoctorView doctorView = new DoctorView();
-	               doctorView.display(0);
+	            	doctorView.display(openPatient.getId());
 	               // primaryStage.close(); // Close the login window
 	            	System.out.println("Should be doctor view");
-	            } else if (password.startsWith("0")) {
+	            } else if (accountType == Actor.Role.NURSE) {
 	                // Open NurseView
-	            	System.out.println("Should be nurse View ");
-	               // new NurseView();
+	            	NurseView newView = new NurseView();
+	            	newView.display(openPatient.getId());
 	            } else {
 	            	
 	                // Open PatientView for other passwords
 	                PatientView patientView = new PatientView();
-	                Patient openPatient = new Patient();
+	  
+	               /*
 	                try {
 						Office.getInstance().storeAccount(usernameField.getText(), passwordField.getText(), openPatient.getRole());
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
+					*/
 	                try {
 						Office.getInstance().storePatientInfo(openPatient.getId(), openPatient.getContactInfo());
 					} catch (IOException e1) {
@@ -74,7 +76,6 @@ public class LoginView extends Application {
 						e1.printStackTrace();
 					}
 	                patientView.display(openPatient.getId());
-	                
 	            }
             }else 
             {
@@ -102,12 +103,11 @@ public class LoginView extends Application {
              patientView.display(newPatient.getId());
            
         });
-
         root.getChildren().addAll(welcomeLabel, usernameField, passwordField, signInButton, createAccountButton);
-        
         Scene scene = new Scene(root, 400, 500);
         primaryStage.setScene(scene);
         primaryStage.setTitle("File-a-Doc Login");
         primaryStage.show();
-    } 
+    }
+   
 }
