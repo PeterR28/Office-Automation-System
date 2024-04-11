@@ -26,34 +26,31 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Random;
 
-//TODO:from patient view get patient ID & implement it to confirm button
-//TODO:search patient ID function
-//TODO:get function for send to doctor from store to medical history
-
-
 public class NurseView extends Application {
-    int id;
+    int id = -1;
+    boolean errorShown = false;
     @Override
     public void start(Stage primaryStage) {
-   
         VBox mainLayout = new VBox(10);
         mainLayout.setPadding(new Insets(15));
-
         
         Label headerLabel = new Label("File-a-doc");
         headerLabel.setFont(Font.font("Garamond", FontWeight.BOLD, 24));
         headerLabel.setTextFill(Color.BLUE);
-
        
         Label welcomeLabel = new Label("Welcome Nurse!");
 
         //search
         TextField searchField = new TextField();
         searchField.setPromptText("Search");
-        Button messagesButton = new Button("Messages");
-        HBox topMenu = new HBox(10, searchField, messagesButton);
+        Button searchButton = new Button("Search");
+        HBox topMenu = new HBox(10, searchField, searchButton);
         topMenu.setAlignment(Pos.CENTER_RIGHT);
         
+        
+        
+        Button messagesButton = new Button("Messages");
+        topMenu.setAlignment(Pos.BOTTOM_CENTER);
         EventHandler<ActionEvent> messagesButtonEvent = new EventHandler<ActionEvent>() { 
             public void handle(ActionEvent e) 
             { 
@@ -61,7 +58,7 @@ public class NurseView extends Application {
                 pv.start(primaryStage);
             } 
         }; 
-        messagesButton.setOnAction(messagesButtonEvent);
+         messagesButton.setOnAction(messagesButtonEvent);
 
         //vitals
         Label vitalLabel = new Label("Vital");
@@ -97,13 +94,14 @@ public class NurseView extends Application {
             	info[2] = bodyTemperatureField.getText();
             	info[3] = bloodPressureField.getText();
             	info[4] = ageField.getText();
-            	
-            	// TODO: figure out where the patient id comes from
-            
 
             	try {
-					//Office.getInstance().storeMedicalHistory(randonId, info);
-            		Office.getInstance().storeMedicalHistory(id, info);
+            		if (id == -1) {
+            			// TODO: show error
+            		} else {
+            			Office.getInstance().storeMedicalHistory(id, info);
+            		}
+            		
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -112,7 +110,7 @@ public class NurseView extends Application {
         }; 
         
         confirmButton.setOnAction( event );
-          	  
+        confirmButton.setDisable(true);
         
         //medicalHistory
         Label medicalHistoryLabel = new Label("Medical History");
@@ -124,24 +122,23 @@ public class NurseView extends Application {
         medicalHistoryArea.setPromptText("Type here");
         HBox medicalHistoryBox = new HBox(10, medicalHistoryLabel, medicalHistoryArea);
         HBox buttonsBox = new HBox(10);
-        Button editButton = new Button("Edit");
-        Button saveButton = new Button("Save");
+        //Button editButton = new Button("Edit");
+        //Button saveButton = new Button("Save");
         Button sendButton = new Button("Send to Doctor");
-        buttonsBox.getChildren().addAll(editButton, saveButton, sendButton);
+        buttonsBox.getChildren().addAll(sendButton,messagesButton);
         
         EventHandler<ActionEvent> event1 = new EventHandler<ActionEvent>() { 
             public void handle(ActionEvent e) 
             { 
             	String[] info = new String[1];
             	info[0] = medicalHistoryArea.getText();
-            	
-            	
-            	// TODO: figure out where the patient id comes from
-            
 
             	try {
-					//Office.getInstance().storeMedicalHistory(randonId, info);
-            		Office.getInstance().storeMedicalHistory(id, info);
+            		if (id == -1) {
+            			// TODO: show error
+            		} else {
+            			Office.getInstance().storeMedicalHistory(id, info);
+            		}
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -150,8 +147,39 @@ public class NurseView extends Application {
         }; 
         
         sendButton.setOnAction( event1 );
+        sendButton.setDisable(true);
         
         
+        searchButton.setOnAction(e -> {
+        	String search = searchField.getText().trim();
+        	
+        	if (errorShown) 
+        	{
+        		errorShown = false;
+        		medicalHistoryArea.setText("");
+        	}
+        	
+        	if (!search.isEmpty()) {
+
+                int patientId = Integer.parseInt(search);
+                try {
+					String pInfo = Office.getInstance().getPatientInfo(patientId);
+					if (!pInfo.isBlank()) {
+						id = patientId;
+						sendButton.setDisable(false);
+						confirmButton.setDisable(false);
+					}
+				} catch (IOException e1) {
+					errorShown = true;
+					searchField.setText("");
+					String errorMessage = "No Patient was found with id " + search;
+					medicalHistoryArea.setText(errorMessage);
+					
+					sendButton.setDisable(true);
+					confirmButton.setDisable(true);
+				}
+        	}
+        });
         
         
         mainLayout.getChildren().addAll(headerLabel, welcomeLabel, topMenu, vitalLabel,vitalGrid, medicalHistoryBox, buttonsBox);
