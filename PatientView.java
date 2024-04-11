@@ -12,6 +12,7 @@ import javafx.scene.text.Font;
 import javafx.scene.paint.Color;
 public class PatientView
 {
+	private String newEnteredId ;
 	private Stage primaryStage; 
 	public void display(int id)
 	{
@@ -73,7 +74,7 @@ public class PatientView
 		
 	    sendMessages.setOnAction(e -> createMessage(id));
 	    contactInfo.setOnAction(e -> contactInfo(id));
-	    medicalHistory.setOnAction(e -> medicalHistory(id));
+	    medicalHistory.setOnAction(e -> medicalHistory());
 	    signOut.setOnAction(e -> signOut());
 	   // patientInfo.setOnAction(e -> patientInfo(id));
 	    
@@ -83,35 +84,76 @@ public class PatientView
 		primaryStage.close();
 	}
 
-	private void medicalHistory(int id) 
+	private void medicalHistory() 
 	{
-		RecordsView newRecord = new RecordsView();
-		newRecord.display();
+		 Stage popupStage = new Stage();
+	     popupStage.setTitle("Patient Information");
+	        // Components
+	    
+	      Label enterIdLabel = new Label("Enter Id:");
+	      TextField enterIdField = new TextField();
+	      enterIdField.setPrefWidth(200); 
+	      Button enterIdButton = new Button("Enter Id");
+	      enterIdButton.setOnAction(even ->
+	      {
+	    		String IdEntered = enterIdField.getText();
+	        	int intId = Integer.parseInt(IdEntered);
+	    	  RecordsView newRecord = new RecordsView();
+	  		newRecord.display(intId);
+	        	
+	        });
+	      VBox layout = new VBox(10); // 10 pixels space between components
+	      layout.setPadding(new Insets(20, 20, 20, 20)); // Margin around the VBox
+	      layout.getChildren().addAll(enterIdLabel, enterIdField, enterIdButton);
+	       Scene scene = new Scene(layout);
+	       popupStage.setScene(scene);
+	      popupStage.show();       
+	       
+		
 	}
 
 	private void contactInfo(int id ) 
 	{
-		String patientInfo =""; 
-		try {
-			patientInfo = Office.getInstance().getPatientInfo(id);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		
 		   Stage popupStage = new Stage();
 	        popupStage.setTitle("Patient Information");
-
 	        // Components
 	        Label infoLabel = new Label("Contact Info");
-
 	        // TextField for patient information
 	        TextArea infoField = new TextArea(); // Assume patientInfo is already set
 	        infoField.setPrefWidth(300); // Set preferred width
-	        infoField.setText(patientInfo);
+	        Label enterIdLabel = new Label("Enter Id:");
+	        TextField enterIdField = new TextField();
+	        enterIdField.setPrefWidth(200); 
+	        Button enterIdButton = new Button("Enter Id");
+	       
+        	
+	       // String IdEntered = "";
+	        enterIdButton.setOnAction(even ->
+	        {
+	        	String IdEntered = enterIdField.getText();
+	        	int intId = Integer.parseInt(IdEntered);
+	        	String patientInfo =""; 
+	        	try {
+	        		patientInfo = Office.getInstance().getPatientInfo(intId);
+	        	}	 catch	 (IOException e) {
+				e.printStackTrace();
+			}
+	        	infoField.setText(patientInfo);
+	        	
+	        });
+
+	        // HBox to hold the label and text field for entering ID
+	        HBox enterIdBox = new HBox(10); // 10 pixels space between components
+	        enterIdBox.getChildren().addAll(enterIdLabel, enterIdField, enterIdButton);
+
 	        // TextField for phone number update
 	   
 	        // Update button for patient information
 	        Button updateInfoButton = new Button("Update Info");
 	        updateInfoButton.setOnAction(event -> {
+	        	String IdEntered = enterIdField.getText();
+	        	int intId = Integer.parseInt(IdEntered);
 	        	String[] updatedInfo = new String[5];
 	        	String text = infoField.getText(); // Get text from the TextArea
 	            String[] lines = text.split("\n"); // Split the text into lines
@@ -121,17 +163,17 @@ public class PatientView
 	                 updatedInfo[i] = lines[i];
 	              }
 	            try {
-					Office.getInstance().storePatientInfo(id, updatedInfo);
+					Office.getInstance().storePatientInfo(intId, updatedInfo);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 	            System.out.println("Updated info: " + infoField.getText());
 	        });
-	        
+	       
 	        VBox layout = new VBox(10); // 10 pixels space between components
 	        layout.setPadding(new Insets(20, 20, 20, 20)); // Margin around the VBox
-	        layout.getChildren().addAll(infoLabel, infoField, updateInfoButton);
+	        layout.getChildren().addAll(infoLabel, infoField, updateInfoButton,enterIdBox);
 	        Scene scene = new Scene(layout);
 	        popupStage.setScene(scene);
 	        popupStage.show();       
